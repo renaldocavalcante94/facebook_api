@@ -1,0 +1,7 @@
+*test*
+*.csv
+*debug*
+*vscode*
+*__py*
+*ipynb*
+*legacy*
