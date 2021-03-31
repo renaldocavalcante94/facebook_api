@@ -1,14 +1,12 @@
-from facebook.api_base import APIBase
+from .api_base import APIBase
 import pandas as pd
-import requests
-import json
 
 class FacebookAdsAPI(APIBase):
 
     def __init__(self,ad_account_id,access_token):
         
         self.ad_account_id = ad_account_id
-        self.base_url = "https://graph.facebook.com/v8.0/"
+        self.base_url = "https://graph.facebook.com/v10.0/"
         self.access_token = access_token
         self.access_token_uri = f"access_token={access_token}"
         super().__init__()
@@ -28,7 +26,7 @@ class FacebookAdsAPI(APIBase):
 
             params = {"fields": fields,
             "access_token":self.access_token,
-            "date_preset": "lifetime"
+            "date_preset": "maximum"
             }
             uri = self.base_url + f"{self.ad_account_id}/{node_name}?"
 
@@ -53,7 +51,7 @@ class FacebookAdsAPI(APIBase):
 
 
 
-    def get_campaign_insights(self,campaign_id,time_increment=1,as_df=False):
+    def get_campaign_insights(self,campaign_id,time_increment=1,as_df=False,date_preset="maximum"):
         fields = """account_currency,account_id,account_name,campaign_id,campaign_name,
             buying_type,clicks,date_start,date_stop,frequency,impressions,
             inline_link_clicks,inline_post_engagement,objective,reach,social_spend,
@@ -67,7 +65,7 @@ class FacebookAdsAPI(APIBase):
 
         params = {"access_token":self.access_token,
                 "fields":fields,
-                "date_preset":"lifetime",
+                "date_preset":date_preset,
                 "time_increment":time_increment}
         uri = f"{self.base_url}{campaign_id}/insights?"
 
@@ -79,3 +77,40 @@ class FacebookAdsAPI(APIBase):
         else:
             return data
 
+    def get_all_ads_groups(self,as_df=False):
+        node_name = "adsets"
+        fields = """id,account_id,adlabels,adset_schedule,asset_feed_id,attribution_spec,campaign,campaign_id,created_time,creative_sequence,destination_type,effective_status,end_time,start_time,status,targeting,updated_time"""
+
+        params = {"fields": fields,
+        "access_token":self.access_token,
+        "date_preset": "maximum"
+        }
+        uri = self.base_url + f"{self.ad_account_id}/{node_name}?"
+
+        data = self.make_get_processing(uri,params)
+
+        if as_df:
+            df_data = pd.DataFrame(data)
+            return df_data
+        else:
+            return data
+
+    def get_adgroups_insights(self,adset_id,time_increment=1,as_df=False,date_preset="maximum"):
+        fields = """ad_click_actions,ad_id,ad_impression_actions,ad_name,adset_id,adset_name,age_targeting,
+                    campaign_id,clicks,conversions,conversion_values,cpc,cpm,cpp,created_time,ctr,date_start,date_stop,
+                    frequency,full_view_impressions,full_view_reach,reach,spend,unique_actions,unique_clicks,updated_time"""
+
+
+        params = {"access_token":self.access_token,
+                "fields":fields,
+                "date_preset":date_preset,
+                "time_increment":time_increment}
+        uri = f"{self.base_url}{adset_id}/insights?"
+
+        data = self.make_get_processing(uri,params)
+
+        if as_df:
+            df_data = pd.DataFrame(data)
+            return df_data
+        else:
+            return data
