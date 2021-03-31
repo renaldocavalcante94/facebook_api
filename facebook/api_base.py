@@ -1,4 +1,3 @@
-from facebook.facebokads import *
 import requests
 
 
@@ -9,8 +8,12 @@ class APIBase():
 
     def make_get(self,uri,params=None,return_type='json'):
         self.requests += 1
-        request_informative = f"Request Number: {self.requests}"
-        print(request_informative)
+        
+        if self.request_count:
+            print(self.requests)
+        
+
+        # ! To Do - Create an logging to the external requests
 
         result = requests.get(uri,params=params)
 
@@ -44,10 +47,14 @@ class APIBase():
 
         try:
             data = result['data']
-            paging = result['paging']
-        except Exception:
+            if data != []:
+                paging = result['paging']
+            else:
+                return data
+
+        except Exception as error:
             print(result)
-            raise Exception
+            raise error
 
         data = self.paging_processment(data,paging)
 
