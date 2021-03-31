@@ -114,3 +114,42 @@ class FacebookAdsAPI(APIBase):
             return df_data
         else:
             return data
+
+
+    def get_all_ads(self,as_df=False):
+        node_name = "ads"
+        fields = """id,account_id,adlabels,created_time,creative,name,status,updated_time"""
+
+        params = {"fields": fields,
+        "access_token":self.access_token,
+        "date_preset": "maximum"
+        }
+        uri = self.base_url + f"{self.ad_account_id}/{node_name}?"
+
+        data = self.make_get_processing(uri,params)
+
+        if as_df:
+            df_data = pd.DataFrame(data)
+            return df_data
+        else:
+            return data
+
+    def get_ad_insights(self,ad_id,time_increment=1,as_df=False,date_preset="maximum"):
+        fields = """account_id,ad_click_actions,ad_id,ad_name,adset_id,age_targeting,campaign_id,clicks,
+                    conversions,cpc,cpm,cpp,ctr,date_start,created_time,date_stop,frequency,gender_targeting,
+                    impressions,reach,spend,unique_clicks,unique_actions,unique_ctr"""
+
+
+        params = {"access_token":self.access_token,
+                "fields":fields,
+                "date_preset":date_preset,
+                "time_increment":time_increment}
+        uri = f"{self.base_url}{ad_id}/insights?"
+
+        data = self.make_get_processing(uri,params)
+
+        if as_df:
+            df_data = pd.DataFrame(data)
+            return df_data
+        else:
+            return data
