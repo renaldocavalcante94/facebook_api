@@ -9,7 +9,9 @@ class APIBase():
     def make_get(self,uri,params=None,return_type='json'):
         self.requests += 1
         
-        print(self.requests)
+        if self.request_count:
+            print(self.requests)
+        
 
         # ! To Do - Create an logging to the external requests
 

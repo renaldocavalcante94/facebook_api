@@ -9,6 +9,7 @@ class FacebookAdsAPI(APIBase):
         self.base_url = "https://graph.facebook.com/v10.0/"
         self.access_token = access_token
         self.access_token_uri = f"access_token={access_token}"
+        self.request_count = False
         super().__init__()
         
     def get_ad_account(self):
